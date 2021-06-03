@@ -38,9 +38,8 @@ def main():
     
     # オーダー登録
     order=Order(item_master)
-    order.add_item_order("001")
-    order.add_item_order("002")
-    order.add_item_order("003")
+    order_input = input('ほしい商品の商品コードをいれてください：')
+    order.add_item_order(order_input)
     
     # オーダー表示
     order.view_item_list()
