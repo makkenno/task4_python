@@ -1,3 +1,5 @@
+import pandas as pd
+
 ### 商品クラス
 class Item:
     def __init__(self,item_code,item_name,price):
@@ -22,20 +24,22 @@ class Order:
             print("商品コード:{}".format(item))
 
     def view_order_list(self):
-        for column in self.item_master:
+        for row in self.item_master:
             for item in self.item_order_list:
-                if column.item_code == item:
-                    print("商品名：{} 価格：{}円".format(column.item_name,column.price))
+                if row.item_code == item:
+                    print("商品名：{} 価格：{}円".format(row.item_name,row.price))
     
+def add_item_master_from_csv(csv_path):
+    # マスタ登録
+    item_master=[]
+    item_master_df = pd.read_csv(csv_path, dtype={"code":object})
+    for row in item_master_df.itertuples():
+        item_master.append(Item(row.code,row.name,row.price))
+    return item_master
     
 ### メイン処理
 def main():
-    # マスタ登録
-    item_master=[]
-    item_master.append(Item("001","りんご",100))
-    item_master.append(Item("002","なし",120))
-    item_master.append(Item("003","みかん",150))
-    
+    item_master = add_item_master_from_csv('./item_master.csv')
     # オーダー登録
     order=Order(item_master)
     order_input = input('ほしい商品の商品コードをいれてください：')
