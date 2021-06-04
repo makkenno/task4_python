@@ -43,7 +43,7 @@ class Order:
             print("商品コード:{}".format(item))
 
     def view_order_list(self):
-        total_price=0
+        self.total_price=0
         for row in self.item_master:
             for item_code,item_quantity in zip(self.item_order_list,self.item_quantity_list):
                 if row.item_code == item_code:
@@ -51,8 +51,22 @@ class Order:
                     print(f"商品名：{row.item_name}")
                     print(f"{item_quantity}個")
                     print(f"{price}円")
-                    total_price+=price
-        print(f"合計金額：{total_price}")
+                    self.total_price+=price
+        print(f"合計金額：{self.total_price}")
+
+    def pay_off(self):
+        if len(self.item_order_list)>=1:
+            while True:
+                amount_to_pay=input("お支払い金額を入力してください：")
+                change_money=int(amount_to_pay)-self.total_price
+                if change_money>=0:
+                    print(f"お支払い金額：{amount_to_pay}円")
+                    print(f"お釣り：{change_money}円")
+                    break
+                else:
+                    print(f"{abs(change_money)}円不足しています。再度入力してください")
+            print("ありがとうございました。")
+
     
 def add_item_master_from_csv(csv_path):
     # マスタ登録
@@ -71,8 +85,10 @@ def main():
     
     # オーダー表示
     order.view_item_list()
-
     order.view_order_list()
+    
+    # 精算
+    order.pay_off()
     
 if __name__ == "__main__":
     main()
