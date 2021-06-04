@@ -2,10 +2,11 @@ import pandas as pd
 
 ### 商品クラス
 class Item:
-    def __init__(self,item_code,item_name,price):
+    def __init__(self,item_code,item_name,price,quantity=0):
         self.item_code=item_code
         self.item_name=item_name
         self.price=price
+        self.quantity=quantity
     
     def get_price(self):
         return self.price
@@ -14,10 +15,28 @@ class Item:
 class Order:
     def __init__(self,item_master):
         self.item_order_list=[]
+        self.item_quantity_list=[]
         self.item_master=item_master
+
+    def take_order(self):
+        while True:
+            item_code = ""
+            input_text=input("商品コードを入力してください。終了する場合はendと入力してください：")
+            if input_text == "end":
+                break
+            for row in self.item_master:
+                if row.item_code == input_text:
+                    item_code = input_text
+            if not item_code:
+                print('登録されている商品コードを入力してください')
+                continue
+            item_quantity=input("個数を入力してください:")
+            self.add_item_order(item_code,item_quantity)
+
     
-    def add_item_order(self,item_code):
+    def add_item_order(self,item_code,item_quantity):
         self.item_order_list.append(item_code)
+        self.item_quantity_list.append(item_quantity)
         
     def view_item_list(self):
         for item in self.item_order_list:
@@ -42,8 +61,7 @@ def main():
     item_master = add_item_master_from_csv('./item_master.csv')
     # オーダー登録
     order=Order(item_master)
-    order_input = input('ほしい商品の商品コードをいれてください：')
-    order.add_item_order(order_input)
+    order.take_order()
     
     # オーダー表示
     order.view_item_list()
