@@ -43,10 +43,16 @@ class Order:
             print("商品コード:{}".format(item))
 
     def view_order_list(self):
+        total_price=0
         for row in self.item_master:
-            for item in self.item_order_list:
-                if row.item_code == item:
-                    print("商品名：{} 価格：{}円".format(row.item_name,row.price))
+            for item_code,item_quantity in zip(self.item_order_list,self.item_quantity_list):
+                if row.item_code == item_code:
+                    price=row.price*int(item_quantity) 
+                    print(f"商品名：{row.item_name}")
+                    print(f"{item_quantity}個")
+                    print(f"{price}円")
+                    total_price+=price
+        print(f"合計金額：{total_price}")
     
 def add_item_master_from_csv(csv_path):
     # マスタ登録
