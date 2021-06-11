@@ -1,4 +1,5 @@
 import pandas as pd
+import datetime
 
 ### 商品クラス
 class Item:
@@ -17,6 +18,11 @@ class Order:
         self.item_order_list=[]
         self.item_quantity_list=[]
         self.item_master=item_master
+        self.set_datetime()
+
+    
+    def set_datetime(self):
+        self.datetime=datetime.datetime.now().strftime('%Y-%m-%d-%H-%M-%S')
 
     def take_order(self):
         while True:
@@ -44,15 +50,17 @@ class Order:
 
     def view_order_list(self):
         self.total_price=0
+        self.receipt_file_name=f"{self.datetime}.log"
+        self.receipt("登録商品一覧")
         for row in self.item_master:
             for item_code,item_quantity in zip(self.item_order_list,self.item_quantity_list):
                 if row.item_code == item_code:
                     price=row.price*int(item_quantity) 
-                    print(f"商品名：{row.item_name}")
-                    print(f"{item_quantity}個")
-                    print(f"{price}円")
+                    self.receipt(f"商品名：{row.item_name}")
+                    self.receipt(f"{item_quantity}個")
+                    self.receipt(f"{price}円")
                     self.total_price+=price
-        print(f"合計金額：{self.total_price}")
+        self.receipt(f"合計金額：{self.total_price}円")
 
     def pay_off(self):
         if len(self.item_order_list)>=1:
@@ -60,12 +68,18 @@ class Order:
                 amount_to_pay=input("お支払い金額を入力してください：")
                 change_money=int(amount_to_pay)-self.total_price
                 if change_money>=0:
-                    print(f"お支払い金額：{amount_to_pay}円")
-                    print(f"お釣り：{change_money}円")
+                    self.receipt(f"お支払い金額：{amount_to_pay}円")
+                    self.receipt(f"お釣り：{change_money}円")
                     break
                 else:
                     print(f"{abs(change_money)}円不足しています。再度入力してください")
             print("ありがとうございました。")
+
+    def receipt(self,text):
+        print(text)
+        with open("./receipt/" + self.receipt_file_name,mode="a",encoding="utf-8_sig") as f:
+            f.write(text+"\n") 
+
 
     
 def add_item_master_from_csv(csv_path):
